@@ -1,0 +1,3 @@
+/home/aj/hdd1/clion/Flexible-CUDA/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/aj/hdd1/clion/Flexible-CUDA/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/aj/hdd1/clion/Flexible-CUDA/cmake-build-debug/CMakeFiles/Flexible_CUDA.dir
