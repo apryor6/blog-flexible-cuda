@@ -2,6 +2,7 @@
 #include "Array2D.h"
 #include "ArrayPow2.h"
 
+
 //#include "Array2D_CUDA.h"
 using namespace std;
 int main() {
@@ -13,11 +14,10 @@ int main() {
 
     Array2D<double> result(arr);
     //result = arr;
-    ArrayPow2<double>(arr, result);
+    ArrayPow2(arr, result);
 
     cout << *result.begin() << endl;
 
-
-
     return 0;
 }
+
