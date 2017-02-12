@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Array2D.h"
 #include "ArrayPow2.h"
-
+#include "Array2D_CUDA.h"
 
 //#include "Array2D_CUDA.h"
 using namespace std;
@@ -17,6 +17,13 @@ int main() {
     ArrayPow2(arr, result);
 
     cout << *result.begin() << endl;
+
+    cout << "GPU now" << endl;
+    ArrayPow2_CUDA(arr, result);
+
+    cout << *result.begin() << endl;
+
+
 
     return 0;
 }
