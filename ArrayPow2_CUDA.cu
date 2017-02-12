@@ -5,6 +5,11 @@
 #include <iostream>
 #define BLOCK_SIZE 1024
 
+template <class T>
+__global__ void pow2(T* in, T* out, size_t N){
+    int idx = threadIdx.x + blockIdx.x*blockDim.x;
+    if (idx < N)out[idx] = in[idx] * in[idx];
+}
 
 template <class T>
 void ArrayPow2_CUDA(Array2D<T>& in, Array2D<T>& result) {
@@ -14,13 +19,6 @@ void ArrayPow2_CUDA(Array2D<T>& in, Array2D<T>& result) {
     pow2 <<< (N - 1) / BLOCK_SIZE + 1, BLOCK_SIZE >>> (in_d.begin(), in_d.begin(), in.size());
     cudaMemcpy(in.begin(), in_d.begin(), sizeof(T) * N, cudaMemcpyDeviceToHost);
 }
-
-template <class T>
-__global__ void pow2(T* in, T* out, size_t N){
-    int idx = threadIdx.x + blockIdx.x*blockDim.x;
-    if (idx < N)out[idx] = in[idx] * in[idx];
-}
-
 
 
 template void ArrayPow2_CUDA(Array2D<float>&, Array2D<float>&);

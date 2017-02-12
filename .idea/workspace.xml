@@ -33,10 +33,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b7932f14-70d4-4a47-b7ef-18f94cac4e0c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/2017-2-11-Flexible-CUDA.md" afterPath="$PROJECT_DIR$/2017-2-11-Flexible-CUDA.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ArrayPow2.h" afterPath="$PROJECT_DIR$/ArrayPow2.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ArrayPow2_CUDA.cu" afterPath="$PROJECT_DIR$/ArrayPow2_CUDA.cu" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.cpp" afterPath="$PROJECT_DIR$/main.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -115,7 +112,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ArrayPow2.h" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ArrayPow2.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ArrayPow2.h">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="45">
@@ -153,14 +150,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ArrayPow2_CUDA.cu" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ArrayPow2_CUDA.cu" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ArrayPow2_CUDA.cu">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="4" lean-forward="false" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
+            <state relative-caret-position="315">
+              <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
               <folding>
-                <element signature="e#150#159#0" expanded="true" />
-                <element signature="e#511#520#0" expanded="true" />
+                <element signature="e#149#158#0" expanded="true" />
+                <element signature="e#315#324#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -199,8 +196,8 @@
         <option value="$PROJECT_DIR$/ArrayPow2_CUDA.cuh" />
         <option value="$PROJECT_DIR$/2017-2-11-Flexible-CUDA.md" />
         <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/ArrayPow2_CUDA.cu" />
         <option value="$PROJECT_DIR$/ArrayPow2.h" />
+        <option value="$PROJECT_DIR$/ArrayPow2_CUDA.cu" />
       </list>
     </option>
   </component>
@@ -454,7 +451,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21973000" />
+    <option name="totallyTimeSpent" value="22044000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="51" y="23" width="1389" height="877" extended-state="6" />
@@ -568,8 +565,8 @@
         <state relative-caret-position="375">
           <caret line="25" column="29" lean-forward="false" selection-start-line="25" selection-start-column="29" selection-end-line="25" selection-end-column="29" />
           <folding>
-            <element signature="e#150#159#0" expanded="true" />
-            <element signature="e#511#520#0" expanded="true" />
+            <element signature="e#149#158#0" expanded="true" />
+            <element signature="e#315#324#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -651,8 +648,8 @@
         <state relative-caret-position="330">
           <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
           <folding>
-            <element signature="e#150#159#0" expanded="true" />
-            <element signature="e#511#520#0" expanded="true" />
+            <element signature="e#149#158#0" expanded="true" />
+            <element signature="e#315#324#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -948,17 +945,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ArrayPow2_CUDA.cu">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="4" lean-forward="false" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
-          <folding>
-            <element signature="e#150#159#0" expanded="true" />
-            <element signature="e#511#520#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Array2D_CUDA.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-630">
@@ -977,6 +963,17 @@
           <folding>
             <element signature="e#0#20#0" expanded="true" />
             <element signature="e#71#80#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ArrayPow2_CUDA.cu">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#149#158#0" expanded="true" />
+            <element signature="e#315#324#0" expanded="true" />
           </folding>
         </state>
       </provider>
