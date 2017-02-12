@@ -12,7 +12,6 @@ struct Cutype{
 };
 
 
-template <>
 template <class U>
 class Array2D< Cutype<U> > {
 public:
@@ -20,12 +19,15 @@ public:
             const size_t& _nrows,
             const size_t& _ncols);
     Array2D(const Array2D<U>&);
+Array2D< Cutype<U> >& operator=(const Array2D<U>& other);
     ~Array2D();
     size_t get_nrows() const {return *this->nrows;}
     size_t get_ncols() const {return *this->ncols;}
     size_t size()      const {return *this->N;}
-    U* begin()const;
-    U* end()const;
+    U* begin()const{return data;}
+    U* end()const{return data + this->size();}
+    U* begin(){return data;}
+    U* end(){return data + this->size();}
 private:
     U* data;
     size_t* nrows;
@@ -34,7 +36,6 @@ private:
 
 };
 
-template <>
 template <class U>
 Array2D< Cutype<U> >::Array2D(U* _data,
                     const size_t& _nrows,
@@ -52,9 +53,9 @@ Array2D< Cutype<U> >::Array2D(U* _data,
     cudaMemcpy(data,  &_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
 };
 
-template <>
 template <class U>
 Array2D< Cutype<U> >::Array2D(const Array2D<U>& other){
+    cout << "copy constructor for GPU\n";
     size_t N_tmp = other.size();
 
     cudaMalloc((void**)&nrows, sizeof(size_t));
@@ -74,7 +75,6 @@ Array2D< Cutype<U> >::Array2D(const Array2D<U>& other){
 }
 
 
-template <>
 template <class U>
 Array2D< Cutype<U> >& Array2D< Cutype<U> >::operator=(const Array2D<U>& other){
     size_t N_tmp = other.size();
@@ -98,7 +98,6 @@ Array2D< Cutype<U> >& Array2D< Cutype<U> >::operator=(const Array2D<U>& other){
 }
 
 
-template <>
 template <class U>
 Array2D< Cutype<U> >::~Array2D(){
     cudaFree(nrows);

@@ -15,8 +15,10 @@ public:
     size_t get_nrows() const {return this->nrows;}
     size_t get_ncols() const {return this->ncols;}
     size_t size()      const {return this->N;}
-    T* begin() const;
-    T* end() const;
+    T* begin(){return data;}
+    T* end(){return data + this->size();}
+    T* begin()const{return data;}
+    T* end()const{return data + this->size();}
 private:
     T* data;
     size_t nrows;
@@ -57,11 +59,6 @@ Array2D<T>& Array2D<T>::operator=(const Array2D<T>& other){
     return *this;
 };
 
-template <class T>
-T* Array2D<T>::begin()const{return this->data;}
-
-template <class T>
-T* Array2D<T>::end()const{return (this->data + this->N);}
 
 
 #endif //ARRAY2D_H
