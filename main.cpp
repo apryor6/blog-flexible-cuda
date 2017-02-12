@@ -17,20 +17,14 @@ using namespace std;
 int main(int argc, char** argv) {
 
 #ifdef ENABLE_GPU
-    if (argc>1){cout<<"Bla";
-	cout << "argv[1] = " << argv[1] << endl;
-	cout << "argv[1] = " << strcmp(argv[1],"gpu") << endl;
-        if (!strcmp(argv[1],"gpu")){
-		cout << "using gpu\n";
-        	if (strcmp(argv[2],"1")){
-		ArrayPow2 = ArrayPow2_CUDA;
-		} else{
-		ArrayPow2 = ArrayPow2_CPU;
-		}
-	}
-     } else
+    if (argc>1 & !strcmp(argv[1],"gpu")) ){
+        if (strcmp(argv[2],"1")){
+            ArrayPow2 = ArrayPow2_CUDA;
+        } else{
+            ArrayPow2 = ArrayPow2_CPU;
+	    }
+    } else
     {
-cout << "Debug\n";
         ArrayPow2 = ArrayPow2_CUDA;
     }
 #else
