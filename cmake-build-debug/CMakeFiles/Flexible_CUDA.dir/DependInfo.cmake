@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/aj/hdd1/clion/Flexible-CUDA/main.cpp" "/home/aj/hdd1/clion/Flexible-CUDA/cmake-build-debug/CMakeFiles/Flexible_CUDA.dir/main.cpp.o"
+  "/Users/ajpryor/blog-flexible-cuda/main.cpp" "/Users/ajpryor/blog-flexible-cuda/cmake-build-debug/CMakeFiles/Flexible_CUDA.dir/main.cpp.o"
   )
-set(CMAKE_CXX_COMPILER_ID "GNU")
+set(CMAKE_CXX_COMPILER_ID "AppleClang")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH

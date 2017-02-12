@@ -6,11 +6,25 @@
 
 #IncludeRegexTransform: 
 
-/home/aj/hdd1/clion/Flexible-CUDA/Array2D.h
+/Users/ajpryor/blog-flexible-cuda/Array2D.h
+iostream
+-
 
-/home/aj/hdd1/clion/Flexible-CUDA/main.cpp
+/Users/ajpryor/blog-flexible-cuda/Array2D_CUDA.h
 iostream
 -
 Array2D.h
-/home/aj/hdd1/clion/Flexible-CUDA/Array2D.h
+/Users/ajpryor/blog-flexible-cuda/Array2D.h
+cuda.h
+/Users/ajpryor/blog-flexible-cuda/cuda.h
+cuda_runtime_api.h
+/Users/ajpryor/blog-flexible-cuda/cuda_runtime_api.h
+
+/Users/ajpryor/blog-flexible-cuda/main.cpp
+iostream
+-
+Array2D.h
+/Users/ajpryor/blog-flexible-cuda/Array2D.h
+Array2D_CUDA.h
+/Users/ajpryor/blog-flexible-cuda/Array2D_CUDA.h
 

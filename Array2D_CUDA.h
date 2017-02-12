@@ -50,14 +50,6 @@ Array2D< Cutype<U> >::Array2D(U* _data,
     cudaMemcpy(ncols, &_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(N,     &N_tmp , sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(data,  &_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
-
-    size_t a = 0;
-    size_t* b;
-    *b = a;
-    cudaMemcpy(b, ncols , sizeof(size_t), cudaMemcpyDeviceToHost);
-    cout << "*b = " << *b << endl;
-    cout << "Super double secret construction with GPU memory allocation and copying" << endl;
-
 };
 
 template <>
@@ -79,20 +71,36 @@ Array2D< Cutype<U> >::Array2D(const Array2D<U>& other){
     cudaMemcpy(ncols, &other_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(N,     &other_N    , sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(data,  &other_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
-
-    size_t a = 0;
-    size_t* b;
-    *b = a;
-    cudaMemcpy(b, ncols , sizeof(size_t), cudaMemcpyDeviceToHost);
-    cout << "*b = " << *b << endl;
-    cout << "Super double secret COPY construction with GPU memory allocation and copying" << endl;
-
 }
+
+
+template <>
+template <class U>
+Array2D< Cutype<U> >& Array2D< Cutype<U> >::operator=(const Array2D<U>& other){
+    size_t N_tmp = other.size();
+
+    cudaMalloc((void**)&nrows, sizeof(size_t));
+    cudaMalloc((void**)&ncols, sizeof(size_t));
+    cudaMalloc((void**)&N    , sizeof(size_t));
+    cudaMalloc((void**)&data , sizeof(U) * N_tmp);
+
+    const size_t other_nrows = other.get_nrows();
+    const size_t other_ncols = other.get_ncols();
+    const size_t other_N = other.size();
+    U *other_data = other.begin();
+
+    cudaMemcpy(nrows, &other_nrows, sizeof(size_t) , cudaMemcpyHostToDevice);
+    cudaMemcpy(ncols, &other_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
+    cudaMemcpy(N,     &other_N    , sizeof(size_t) , cudaMemcpyHostToDevice);
+    cudaMemcpy(data,  &other_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
+
+    return *this;
+}
+
 
 template <>
 template <class U>
 Array2D< Cutype<U> >::~Array2D(){
-    cout << "Cleaning up cuda data" << endl;
     cudaFree(nrows);
     cudaFree(ncols);
     cudaFree(N);

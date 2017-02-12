@@ -1,20 +1,23 @@
 #include <iostream>
 #include "Array2D.h"
-#include "Array2D_CUDA.h"
+#include "ArrayPow2.h"
+
+//#include "Array2D_CUDA.h"
 using namespace std;
 int main() {
     Array2D<double> arr(new double[120], 60, 2);
-    //for (auto& i:arr)cout << i << '\n';
+    int a = 2;
+    for (auto& i:arr)i=++a;
+
+    cout << *arr.begin() << endl;
+
+    Array2D<double> result(arr);
+    //result = arr;
+    ArrayPow2<double>(arr, result);
+
+    cout << *result.begin() << endl;
 
 
-    #ifdef ENABLE_GPU
-    Array2D< Cutype<double> > arr_c(new double[100], 10, 10);
-    #endif
 
-    Array2D< Cutype<double> > arr_other(arr);
-
-
-    //for (auto& i:arr)i=++a;
-    //for (auto& i:arr)cout << i << '\n';
     return 0;
 }
