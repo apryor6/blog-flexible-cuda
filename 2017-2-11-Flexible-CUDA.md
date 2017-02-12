@@ -102,7 +102,8 @@ void ArrayPow2(Array2D<T>& in, Array2D<T>& result){
 
 `std::transform` applies the function-like object in the 4th argument to every element from the first to second arguments, and stores the results in the 3rd. Here I used a lambda function.  
 
-Here's a simple driver to test what we have so far. 
+A simple driver program verifies that what we have 
+so far is okay:
 
 ~~~c++
 #include <iostream>
@@ -128,3 +129,150 @@ arr[0]   = 3
 arr[0]^2 = 9
 ~~~
 
+## CUDA Template Specialization
+
+To make developing/transcribing the CUDA version of our code easier,
+we want to implement a CUDA version of our `Array2D` class. This can
+be done by creating a specialization of `Array2D` for CUDA. To differentiate
+between the CPU and GPU versions of `Array2D`, I introduce a trivial class 
+that just contains a single value. 
+
+~~~ c++
+template <class T>
+struct Cutype{
+    T val;
+};
+~~~
+
+The effect this has is subtle, but powerful. With no additional overhead,
+I can now create an `Array2D< Cutype<float> >` that will instantiate an entirely
+different class than `Array2D<float>`, and in this case that specialzation
+ will be used to abstract away calls to `cudaMalloc`, `cudaMemcpy`, etc.
+ 
+ Here is the full specialization (as before this class
+ is incomplete, but contains the code relevant to this discussion):
+ 
+ ~~~ c++
+ #ifndef ARRAY2D_CUDA_H
+ #define ARRAY2D_CUDA_H
+ #include <iostream>
+ #include "Array2D.h"
+ #include "cuda.h"
+ #include "cuda_runtime_api.h"
+ using namespace std;
+ 
+ template <class T>
+ struct Cutype{
+     T val;
+ };
+ 
+ 
+ template <class U>
+ class Array2D< Cutype<U> > {
+ public:
+     Array2D(U* _data,
+             const size_t& _nrows,
+             const size_t& _ncols);
+     Array2D(const Array2D<U>&);
+ Array2D< Cutype<U> >& operator=(const Array2D<U>& other);
+     ~Array2D();
+     size_t get_nrows() const {return *this->nrows;}
+     size_t get_ncols() const {return *this->ncols;}
+     size_t size()      const {return *this->N;}
+     U* begin()const{return data;}
+     U* end()const{return data + this->size();}
+     U* begin(){return data;}
+     U* end(){return data + this->size();}
+ private:
+     U* data;
+     size_t* nrows;
+     size_t* ncols;
+     size_t* N;
+ 
+ };
+ 
+ template <class U>
+ Array2D< Cutype<U> >::Array2D(U* _data,
+                     const size_t& _nrows,
+                     const size_t& _ncols):data(_data){
+     size_t N_tmp = _nrows * _ncols;
+ 
+     cudaMalloc((void**)&nrows, sizeof(size_t));
+     cudaMalloc((void**)&ncols, sizeof(size_t));
+     cudaMalloc((void**)&N    , sizeof(size_t));
+     cudaMalloc((void**)&data , sizeof(U) * N_tmp);
+ 
+     cudaMemcpy(nrows, &_nrows, sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(ncols, &_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(N,     &N_tmp , sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(data,  &_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
+ };
+ 
+ template <class U>
+ Array2D< Cutype<U> >::Array2D(const Array2D<U>& other){
+     cout << "copy constructor for GPU\n";
+     size_t N_tmp = other.size();
+ 
+     cudaMalloc((void**)&nrows, sizeof(size_t));
+     cudaMalloc((void**)&ncols, sizeof(size_t));
+     cudaMalloc((void**)&N    , sizeof(size_t));
+     cudaMalloc((void**)&data , sizeof(U) * N_tmp);
+ 
+     const size_t other_nrows = other.get_nrows();
+     const size_t other_ncols = other.get_ncols();
+     const size_t other_N = other.size();
+     U *other_data = other.begin();
+ 
+     cudaMemcpy(nrows, &other_nrows, sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(ncols, &other_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(N,     &other_N    , sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(data,  &other_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
+ }
+ 
+ 
+ template <class U>
+ Array2D< Cutype<U> >& Array2D< Cutype<U> >::operator=(const Array2D<U>& other){
+     size_t N_tmp = other.size();
+ 
+     cudaMalloc((void**)&nrows, sizeof(size_t));
+     cudaMalloc((void**)&ncols, sizeof(size_t));
+     cudaMalloc((void**)&N    , sizeof(size_t));
+     cudaMalloc((void**)&data , sizeof(U) * N_tmp);
+ 
+     const size_t other_nrows = other.get_nrows();
+     const size_t other_ncols = other.get_ncols();
+     const size_t other_N = other.size();
+     U *other_data = other.begin();
+ 
+     cudaMemcpy(nrows, &other_nrows, sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(ncols, &other_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(N,     &other_N    , sizeof(size_t) , cudaMemcpyHostToDevice);
+     cudaMemcpy(data,  &other_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
+ 
+     return *this;
+ }
+ 
+ 
+ template <class U>
+ Array2D< Cutype<U> >::~Array2D(){
+     cudaFree(nrows);
+     cudaFree(ncols);
+     cudaFree(N);
+     cudaFree(data);
+ }
+ 
+ 
+ #endif //ARRAY2D_CUDA_H
+ ~~~
+
+Most of the interface should look familiar. A key difference
+is that in place of the assignment and copy constructors
+for `Array2D<T>` that took in another `Array2D<T>` I have
+ defined how an `Array2D< Cutype<T> >` is copied from an 
+ `Array2D<T>`. This way we can construct a 2D array object
+ on the GPU simply by passing in an existing host-side array.
+ The calls to `delete[]` and `new` are replaced by `cudaMalloc`
+ and `cudaFree`, and the data copying is handled with `cudaMemcpy`.
+ Other than the way this object is built, the way you interact with 
+ such a class is largely unchanged.
+ 
