@@ -131,6 +131,7 @@ arr[0]^2 = 9
 
 ## CUDA Template Specialization
 
+
 To make developing/transcribing the CUDA version of our code easier,
 we want to implement a CUDA version of our `Array2D` class. This can
 be done by creating a specialization of `Array2D` for CUDA. To differentiate
@@ -276,3 +277,74 @@ for `Array2D<T>` that took in another `Array2D<T>` I have
  Other than the way this object is built, the way you interact with 
  such a class is largely unchanged.
  
+ ## CUDA Implementation
+ 
+ Although we have written a bunch of code for the GPU, we haven't actually
+ written any CUDA yet -- we've just used the CUDA runtime API. To make a 
+ version of `ArrayPow2` from earlier on the GPU, we create a C++ wrapper function
+ with the same signature in a header file.
+ 
+ ~~~ c++   
+ 
+ //ArrayPow2_CUDA.cuh    
+ 
+ #include "Array2D_CUDA.h"
+ #include "Array2D.h"
+ 
+ template <class T>
+ void ArrayPow2_CUDA(Array2D<T>& in, Array2D<T>& result);
+
+ 
+ ~~~
+ 
+ And then the implementation in a .cu file
+ 
+ ~~~ c++
+ #include "Array2D_CUDA.h"
+ #include "Array2D.h"
+ #include "cuda.h"
+ #include "cuda_runtime_api.h"
+ #define BLOCK_SIZE 1024
+ 
+template <class T>
+void ArrayPow2_CUDA(Array2D<T>& in, Array2D<T>& result) {
+  Array2D< Cutype<T> > in_d(in);
+  size_t N = in.size();
+  pow2 <<< (N - 1) / BLOCK_SIZE + 1, BLOCK_SIZE >>> (in_d.begin(), in_d.begin(), in.size());
+  cudaMemcpy(in.begin(), in_d.begin(), sizeof(T) * N, cudaMemcpyDeviceToHost);
+}
+
+ template <class T>
+ __global__ void pow2(T* in, T* out, size_t N){
+     int idx = threadIdx.x + blockIdx.x*blockDim.x;
+     if (idx < N)out[idx] = in[idx] * in[idx];
+ }
+ 
+
+ 
+ template void ArrayPow2_CUDA(Array2D<float>&, Array2D<float>&);
+ template __global__ void pow2(float*, float*, size_t);
+
+ ~~~
+
+ Now you can see where taking the template specialzation really shines.
+ The wrapper function is called in exactly the same way as our original CPU
+ implementation, and a GPU copy of the array is created in just one line.  
+ We run the kernel using the exact same `.begin()` and `.end()` calls that
+ we used with `std::transform`, and then copy the result back. I explicitly
+ used `cudaMemcpy` here because it's just one line, but you could always 
+ also write a helper function to hide that if you please.  
+ 
+ The one important, and somewhat painful, bit is the necessary addition of the last two lines.  
+ If you have worked with templates much, you'll quickly find that it is a pain to separate
+ prototypes and implementations into different files. The reason is because the template itself
+ just defines how the compiler can construct a class *from a given type*. But if the template code
+ exists in its own compilation unit, then it gets compiled before it knows which classes actually
+ need to be instantiated. By the time the linker is trying to connect your `main()` with whatever templates
+ it needs, it usually will yell at you for undefined symbols.   In C++, there are some ways you can get around this, but with CUDA code the problem
+ is made more significant because `nvcc` separately compiles all of the CUDA code, then
+ compiles and links the C++ to the shared objects.
+ 
+ The solution is to forcibly
+ instantiate the template types that will be used, which I did in those last two lines by forward declaring a template specialization that I
+ intend to use in my library.
