@@ -2,6 +2,7 @@
 #include "Array2D.h"
 #include "ArrayPow2.h"
 #include "Array2D_CUDA.h"
+#include "ArrayPow2_CUDA.cuh"
 
 //#include "Array2D_CUDA.h"
 using namespace std;
