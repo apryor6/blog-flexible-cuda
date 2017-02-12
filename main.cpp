@@ -3,10 +3,12 @@
 #include "ArrayPow2.h"
 #include "Array2D_CUDA.h"
 #include "ArrayPow2_CUDA.cuh"
-
+template <class T>
+using ArrayP = void(*)(Array2D<T>&, Array2D<T>&);
 //#include "Array2D_CUDA.h"
 using namespace std;
 int main() {
+ArrayP<double> F;
     Array2D<double> arr(new double[120], 60, 2);
     int a = 2;
     for (auto& i:arr)i=++a;
@@ -15,12 +17,14 @@ int main() {
 
     Array2D<double> result(arr);
     //result = arr;
-    ArrayPow2(arr, result);
+    F = ArrayPow2;
+    F(arr, result);
 
     cout << *result.begin() << endl;
 
     cout << "GPU now" << endl;
-    ArrayPow2_CUDA(arr, result);
+    F = ArrayPow2_CUDA;
+    F(arr, result);
 
     cout << *result.begin() << endl;
 
