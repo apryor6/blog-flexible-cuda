@@ -91,7 +91,7 @@ Array2D< Cutype<U> >& Array2D< Cutype<U> >::operator=(const Array2D<U>& other){
     cudaMemcpy(nrows, &other_nrows, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(ncols, &other_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(N,     &other_N    , sizeof(size_t) , cudaMemcpyHostToDevice);
-    cudaMemcpy(data,  &other_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
+    cudaMemcpy(data,  other_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
 
     return *this;
 }
