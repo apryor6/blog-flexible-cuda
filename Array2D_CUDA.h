@@ -55,7 +55,6 @@ Array2D< Cutype<U> >::Array2D(U* _data,
 
 template <class U>
 Array2D< Cutype<U> >::Array2D(const Array2D<U>& other){
-    cout << "copy constructor for GPU\n";
     size_t N_tmp = other.size();
 
     cudaMalloc((void**)&nrows, sizeof(size_t));

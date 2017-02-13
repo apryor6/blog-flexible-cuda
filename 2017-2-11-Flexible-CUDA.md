@@ -348,3 +348,109 @@ void ArrayPow2_CUDA(Array2D<T>& in, Array2D<T>& result) {
  The solution is to forcibly
  instantiate the template types that will be used, which I did in those last two lines by forward declaring a template specialization that I
  intend to use in my library.
+
+## Putting it all together 
+
+Now that we have implemented our CUDA template specialization and kernel, 
+we want to tie all of this back into our original library in a way that doesn't
+add any CUDA dependencies to users who just want to continue using the CPU-only version 
+and provides a way to choose between CPU or GPU implementations at runtime without demanding
+ that developers go through their code and change function names everywhere. The solution
+ I used for integrating the GPU code is the following: 
+ 
+ 1. Change the name of the existing C++ function. I append with `_CPU` for clarity.
+ 2. Create a pointer to a function with the same signature as the pure C++ version and 
+ the GPU version wrapper (remember, they have the same signature)
+ 3. Add a compiler directive, ENABLE_GPU. If it is not defined at compile time, don't include
+ anything related to CUDA, and set the function pointer equal to the CPU version. If it is enabled, 
+ then introduce an additional runtime check for a command line input and use that to set the function pointer
+  to either the CPU or CUDA version, appropriately.  
+  
+All of this goes into the driver program, which follows
+
+~~~ c++
+#include <iostream>
+#include <cstring>
+#include "Array2D.h"
+#include "ArrayPow2_CPU.h"
+
+#ifdef ENABLE_GPU
+#include "Array2D_CUDA.h"
+#include "ArrayPow2_CUDA.cuh"
+#endif //ENABLE_GPU
+
+template <class T>
+using ArrayPow2_F = void(*)(Array2D<T>&, Array2D<T>&);
+ArrayPow2_F<float> ArrayPow2;
+using namespace std;
+
+
+int main(int argc, char** argv) {
+#ifdef ENABLE_GPU
+    if (argc>1 && !strcmp(argv[1],"gpu")){
+        if (strcmp(argv[2],"1")){
+            ArrayPow2 = ArrayPow2_CUDA;
+        } else{
+            ArrayPow2 = ArrayPow2_CPU;
+	}
+    } else
+    {
+        ArrayPow2 = ArrayPow2_CUDA;
+    }
+#else
+    ArrayPow2 = ArrayPow2_CPU;
+#endif //ENABLE_GPU
+
+    Array2D<float> arr(new float[120], 60, 2);
+    int a = 2;
+    for (auto& i:arr)i=++a;
+
+    Array2D<float> result(arr);
+    ArrayPow2(arr, result);
+
+    cout << "arr[0]   = " << *arr.begin() << endl;
+    cout << "arr[0]^2 = " << *result.begin() << endl;
+    return 0;
+}
+
+
+~~~
+
+I also add a short Makefile for convenience
+~~~
+//Makefile
+all: cpu
+clean:
+	-rm demo
+cpu:
+	g++ -std=c++11 main.cpp -o demo
+gpu:
+	nvcc -std=c++11 main.cpp -D ENABLE_GPU ArrayPow2_CUDA.cu -o demo
+~~~
+
+With this setup we now have three ways to compile and run the program:
+
+1. Change nothing. Compile with `make`
+2. Compile for the gpu with `make gpu`. The default behavior
+is now to run on the GPU.
+3. Run the program compiled in option 2) on the CPU by adding `gpu 0` to the command line call
+
+
+If you think about it, this is an incredibly powerful programming pattern. We still only have
+to maintain a single code-base as we continue to add more and more GPU functions. Users
+that don't have or want to use CUDA GPU support for any reason are not affected in any way. Most importantly,
+for those who do use the GPU support, the technique of replacing each accelerated
+function with a function pointer and modifying the name of the original C++ version is infectious. A project
+could be millions of lines long, and contain many calls to a function like 
+`ArrayPow2`, but once it is replaced with a function pointer that is set to the GPU implementation, the entire project would immediately use the GPU version 
+ with no further changes. Now, in this example I only considered a single function, but the extension
+ to many is trivial. All that is required is configuration and assignment of the function pointers at the beginning of the end-users program. 
+ Furthermore, this could be done however the developer wanted. For example, a check 
+ could be added for the array size, and the CPU or GPU version alternatively used based
+ on optimizaton/tuning results. Another use case is if code was being run on a large 
+ cluster where some nodes have GPUs, but others do not. A simple query can be run to check if a valid
+ GPU is found and to use it, and then if not to fall back to the CPU version. There are a lot of
+ possibilies, most of which I probably haven't thought of. But after all, writing 
+ software that is flexible enough that it can be easily adapted to fit a particular user's
+ needs without the library developer anticipating them is a sign of good software engineering. 
+ 
