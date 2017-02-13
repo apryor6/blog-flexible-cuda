@@ -16,8 +16,8 @@ using namespace std;
 
 int main(int argc, char** argv) {
 #ifdef ENABLE_GPU
-    if (argc>1 && !strcmp(argv[1],"gpu")){
-        if (strcmp(argv[2],"1")){
+    if (argc>2 && !strcmp(argv[1],"gpu")){
+        if (!strcmp(argv[2],"1")){
             ArrayPow2 = ArrayPow2_CUDA;
         } else{
             ArrayPow2 = ArrayPow2_CPU;
