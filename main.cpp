@@ -33,11 +33,7 @@ int main(int argc, char** argv) {
     Array2D<float> arr(new float[120], 60, 2);
     int a = 2;
     for (auto& i:arr)i=++a;
-    cout << "arr[0]" << *arr.begin()<< endl;
     Array2D<float> result(arr);
-    cout << "arr[0]" << *arr.begin()<< endl;
-    cout << "result[0]" << *result.begin()<< endl;
-
     ArrayPow2(arr, result);
 
     cout << "arr[0]   = " << *arr.begin() << endl;
