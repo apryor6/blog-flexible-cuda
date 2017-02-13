@@ -266,7 +266,7 @@ Array2D< Cutype<U> >::Array2D(U* _data,
     cudaMemcpy(nrows, &_nrows, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(ncols, &_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(N,     &N_tmp , sizeof(size_t) , cudaMemcpyHostToDevice);
-    cudaMemcpy(data,  &_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
+    cudaMemcpy(data,  _data  , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
 };
 
 template <class U>
@@ -286,7 +286,7 @@ Array2D< Cutype<U> >::Array2D(const Array2D<U>& other){
     cudaMemcpy(nrows, &other_nrows, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(ncols, &other_ncols, sizeof(size_t) , cudaMemcpyHostToDevice);
     cudaMemcpy(N,     &other_N    , sizeof(size_t) , cudaMemcpyHostToDevice);
-    cudaMemcpy(data,  &other_data , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
+    cudaMemcpy(data,  other_data  , sizeof(U)*N_tmp, cudaMemcpyHostToDevice);
 }
 
 
@@ -323,6 +323,7 @@ Array2D< Cutype<U> >::~Array2D(){
 
 
 #endif //ARRAY2D_CUDA_H
+
 
  ~~~
 
